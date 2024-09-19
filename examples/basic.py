@@ -7,6 +7,14 @@ def on_poll_update(monitor):
     print ('There was a poll update!')
     print (time.monotic() + monitor.duration - monitor.start_time + ' seconds remaining.')
 
+"""
+Async is required since the poll runs in the background, easy to port to sync (extend PollMonitor) but
+highly recommended to keep as is.
+
+Selenium webdrivers are not thread-safe therefore the driver runs on the main/relevant thread, easy to read, easy to maintain.
+
+Work can be done in the background but it must be `await`ed to gain the benefits of async.
+"""
 async def start_poller(poll_uuid):
     poller = MathMatizePoller(
             None, # silently install new chromedriver, best practice is to provide a path to a local chromedriver if avaliable
