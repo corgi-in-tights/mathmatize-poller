@@ -24,9 +24,8 @@ class PollMonitor:
 
 
     async def _check_for_updates(self):
-        print ('stoort')
+        print ('Initializing monitor loop.')
         while (self.running and not self.is_time_ended(self.start_time, self.duration)):
-            print ('checking for updoot')
             if (self.is_submit_present()):
                 self.update_handler()
             elif (self.fail_handler):
