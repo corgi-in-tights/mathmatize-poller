@@ -3,19 +3,13 @@ from mathmatize_poller import MathMatizePoller
 
 poll_uuid = input('Please enter the UUID in the Poll URL:')
 
-poller = MathMatizePoller(
-    None, # silently install new chromedriver, best practice is to provide a path to a local chromedriver if avaliable
-    os.getenv('MATHMATIZE_EMAIL'),
-    os.getenv('MATHMATIZE_PASSWORD')
-)
-
 def on_poll_update(monitor):
     print ('There was a poll update!')
     print (time.monotic() + monitor.duration - monitor.start_time + ' seconds remaining.')
 
-async def start_poller():
+async def start_poller(poll_uuid):
     poller = MathMatizePoller(
-        "/Users/reyaan/Projects/common/web_drivers/chromedriver-mac-arm64/chromedriver",
+            None, # silently install new chromedriver, best practice is to provide a path to a local chromedriver if avaliable
         os.getenv('MATHMATIZE_EMAIL'),
         os.getenv('MATHMATIZE_PASSWORD')
     )
@@ -30,4 +24,4 @@ async def start_poller():
     poller.shutdown()
 
 
-asyncio.run(start_poller())
+asyncio.run(start_poller(poll_uuid))
