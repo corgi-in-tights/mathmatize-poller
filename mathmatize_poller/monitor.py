@@ -18,7 +18,7 @@ class PollMonitor:
         self.running = False
 
     def is_time_ended(self, start_time, duration):
-        current_time = time.monotonic()
+        current_time = time.time()
         end_time = start_time + duration
         return current_time >= end_time
 
@@ -27,21 +27,22 @@ class PollMonitor:
         print ('Initializing monitor loop.')
         while (self.running and not self.is_time_ended(self.start_time, self.duration)):
             if (self.is_submit_present()):
-                self.update_handler()
+                self.update_handler(self)
             elif (self.fail_handler):
-                self.fail_handler()
+                self.fail_handler(self)
                 
-
             randomized_freq = self.frequency + random.uniform(-self.frequency_k, self.frequency_k)
-            await asyncio.sleep(randomized_freq - ((time.monotonic() - self.start_time) % randomized_freq))
+            await asyncio.sleep(randomized_freq - ((time.time() - self.start_time) % randomized_freq))
+
 
     def is_submit_present(self):
-        self.driver.get(self.url)
+        if self.driver.current_url != self.url:
+            self.driver.get(self.url)
 
         try:
-            _class = 'poller-identified'
-            el = self.driver.find_element(By.XPATH, f"//button[text()='Submit' and not(contains(@class, '.{_class}'))]")
-            self.driver.execute_script(f"arguments[0].classList.add('.{_class}');", el)
+            _class = 'mm-poller-identified'
+            el = self.driver.find_element(By.XPATH, f"//button[text()='Submit' and not(contains(@class, '{_class}'))]")
+            self.driver.execute_script(f"arguments[0].classList.add('{_class}');", el)
 
             return True
         except NoSuchElementException:
@@ -50,7 +51,7 @@ class PollMonitor:
     def start(self):
         if not self.running:
             print ('Starting monitor...')
-            self.start_time = time.monotonic()
+            self.start_time = time.time()
             self.running = True
             asyncio.create_task(self._check_for_updates())
 

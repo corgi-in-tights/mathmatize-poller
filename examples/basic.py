@@ -26,10 +26,18 @@ async def start_poller(poll_uuid):
     monitor.start()
 
     # simulate work
-    await asyncio.sleep(30)
+    await asyncio.sleep(50)
 
     monitor.stop()
     poller.shutdown()
 
 
-asyncio.run(start_poller(poll_uuid))
+
+if __name__ == '__main__':
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    try:
+        loop.create_task(start_poller(loop))
+        loop.run_forever()
+    except KeyboardInterrupt:
+        pass
