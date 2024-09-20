@@ -64,14 +64,14 @@ class MathMatizePoller:
 
         print ('Succesfully signed in.')
 
-    def get_or_create_monitor(self, url, update_handler, duration, frequency, k=0.5, fail_handler=None):
+    def get_or_create_monitor(self, url, update_handler, duration, frequency, k=1.5, fail_handler=None):
         if not self.monitor:
             self.monitor = PollMonitor(self.driver, url, update_handler, duration, frequency, frequency_k=k, fail_handler=fail_handler)
             return self.monitor
         return self.monitor
 
         
-    def shutdown(self):
+    def close(self):
         print (f'Shutting down poller (and attached monitor).')
         if self.monitor:
             self.monitor.stop()

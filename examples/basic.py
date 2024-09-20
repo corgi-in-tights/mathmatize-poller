@@ -1,4 +1,4 @@
-import os, time, asyncio, requests
+import os, time, asyncio, sys, argparse
 from mathmatize_poller import MathMatizePoller
 
 def on_poll_update(monitor):
@@ -20,12 +20,31 @@ async def start_poller(loop, url):
         os.getenv('MATHMATIZE_PASSWORD')
     )
 
-    monitor = poller.get_or_create_monitor(url, on_poll_update, 60*60, 12, k=4)
+    duration = 60*60 # 1 hour, 3600 seconds
+    frequency = 12 # check every 12 seconds (+- 4 seconds)
+    monitor = poller.get_or_create_monitor(url, on_poll_update, duration, frequency, k=4)
     monitor.start()
 
+    # simulate work
+    await asyncio.sleep(25)
 
+    poller.close()
+    loop.close() # to stop the program from running forever
+
+
+def get_url_arg_or_input():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--url", help="Poll URL", required=False)
+    args = parser.parse_args()
+
+    if args.url:
+        return args.url
+    return input('Please enter the poll url:')
+
+
+# to run, use python3 examples/basic.py --url https://www.mathmatize.com/polls/[POLL_UUID]/
 if __name__ == '__main__':
-    url = input('Please enter the poll url:')
+    url = get_url_arg_or_input()
     print ('Selected', url)
 
     loop = asyncio.new_event_loop()
