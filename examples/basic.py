@@ -1,9 +1,6 @@
 import os, time, asyncio, requests
 from mathmatize_poller import MathMatizePoller
 
-
-
-
 def on_poll_update(monitor):
     print (f'There was a poll update on {monitor.url}!')
     print(f'{time.time() + monitor.duration - monitor.start_time} seconds remaining...')
@@ -25,7 +22,6 @@ async def start_poller(loop, url):
 
     monitor = poller.get_or_create_monitor(url, on_poll_update, 60*60, 12, k=4)
     monitor.start()
-
 
 
 if __name__ == '__main__':
